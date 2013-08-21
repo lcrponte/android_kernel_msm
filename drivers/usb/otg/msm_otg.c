@@ -63,6 +63,11 @@
 #endif
 #define MSM_OTG_SUSPEND_CHECK_TIMEOUT 10000L
 
+#ifdef CONFIG_FORCE_FAST_CHARGE
+#include <linux/fastchg.h>
+#define USB_FASTCHG_LOAD 1000 /* uA */
+#endif
+
 static bool g_keep_power_on = 0;
 static bool g_suspend_delay_work_run = 0;
 //ASUS_BSP+++ BennyCheng "add none mode switch for use storage case"
@@ -1581,7 +1586,15 @@ static void msm_otg_notify_charger(struct msm_otg *motg, unsigned mA)
 	//ASUS_BSP+++ "[USB][NA][Spec] Add ASUS charger mode support"
 	if (motg->cur_power == mA)
 		return;
-
+	
+	#ifdef CONFIG_FORCE_FAST_CHARGE
+	if (force_fast_charge == 1) {
+			mA = USB_FASTCHG_LOAD;
+			pr_info("USB fast charging is ON - 1000mA.\n");
+	} else {
+		pr_info("USB fast charging is OFF.\n");
+	}
+	#endif
 	//ASUS_BSP+++ "[USB][NA][Spec] Add ASUS charger mode support"
 	#ifndef CONFIG_CHARGER_ASUS
 	dev_info(motg->phy.dev, "Avail curr from USB = %u\n", mA);
