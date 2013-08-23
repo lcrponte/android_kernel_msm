@@ -9,6 +9,9 @@ ifdef CONFIG_FUNCTION_TRACER
 CFLAGS_REMOVE_ftrace.o = -pg
 CFLAGS_REMOVE_insn.o = -pg
 CFLAGS_REMOVE_patch.o = -pg
+ifdef CONFIG_ARM_UNWIND
+CFLAGS_REMOVE_unwind.o = -pg
+endif
 endif
 
 CFLAGS_REMOVE_return_address.o = -pg
